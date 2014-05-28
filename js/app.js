@@ -146,52 +146,55 @@
       			evaluationACL.setPublicWriteAccess(false);
 		      	evaluationACL.setReadAccess(loginUser, true);
 		      	evaluationACL.setWriteAccess(loginUser, true);
+
 		      	//問看看Parse有沒有這個使用者之前提交過的peer review物件(
-	      		//沒有的話: 從TAHelp生一個出來(加上scores: [‘0’, ‘0’, ‘0’, ‘0’]屬性存分數並把自己排除掉)
 		      	var query = new Parse.Query(Parse.Object.extend('Evaluation'));
 		      	query.equalTo('user', loginUser);
 		      	query.first({
-		        	success: function(evaluation){
-		          	window.EVAL = evaluation;
-		          	if(evaluation === undefined){
-		            	var TeamMembers = TAHelp.getMemberlistOf(loginUser.get('username')).filter(function(e){
-		              	return (e.StudentId !== loginUser.get('username') ) ? true : false;
-		            	}).map(function(e){
-		              	e.scores = ['0', '0', '0', '0'];
-		              	return e;
-		            	});
-		          	} else {
-		            	var TeamMembers = evaluation.toJSON().evaluations;
-		          	}
+		      		success: function(evaluation){
+		          		window.EVAL = evaluation;
+		       	//沒有的話: 從TAHelp生一個出來(加上scores: [‘0’, ‘0’, ‘0’, ‘0’]屬性存分數並把自己排除掉)
+		          		if(evaluation === undefined){
+		            		var TeamMembers = TAHelp.getMemberlistOf(loginUser.get('username')).filter(function(e){
+		              		return (e.StudentId !== loginUser.get('username') ) ? true : false;
+		            		}).map(function(e){
+		              		e.scores = ['0', '0', '0', '0'];
+		              		return e;
+		            		});
+		          		} else {
+			            	var TeamMembers = evaluation.toJSON().evaluations;
+			          	}
 
 		        //把peer review物件裡的東西透過版型印到瀏覽器上();
-		          	document.getElementById('content').innerHTML = template.evaluationView(TeamMembers);
-		          	document.getElementById('evaluationForm-submit').value = ( evaluation === undefined ) ? '送出表單' :'修改表單';
+		          		document.getElementById('content').innerHTML = template.evaluationView(TeamMembers);
+		          		document.getElementById('evaluationForm-submit').value = ( evaluation === undefined ) ? '送出表單' :'修改表單';
 
 
 	      		//綁定表單送出的事件(); // 如果Parse沒有之前提交過的peer review物件，要自己new一個。或更新分數然後儲存。
-		          	document.getElementById('evaluationForm').addEventListener('submit', function(){
-		            	for(var i = 0; i < TeamMembers.length; i++){
-		              	for(var j = 0; j < TeamMembers[i].scores.length; j++){
-		                	var e = document.getElementById('stu'+TeamMembers[i].StudentId+'-q'+j);
-		                	var amount = e.options[e.selectedIndex].value;
-		                	TeamMembers[i].scores[j] = amount;
-		              	}
-		            	}
+			          	document.getElementById('evaluationForm').addEventListener('submit', function(){
+			            	for(var i = 0; i < TeamMembers.length; i++){
+				              	for(var j = 0; j < TeamMembers[i].scores.length; j++){
+				                	var e = document.getElementById('stu'+TeamMembers[i].StudentId+'-q'+j);
+			    	            	var amount = e.options[e.selectedIndex].value;
+			        	        	TeamMembers[i].scores[j] = amount;
+			           	   		}
+		            		}
+
 		            	if( evaluation === undefined ){
 		              	evaluation = new Evaluation();
 		              	evaluation.set('user', loginUser);
 		              	evaluation.setACL(evaluationACL);
 		            	}
-		            	console.log(TeamMembers);
+
+		            	
 		            	evaluation.set('evaluations', TeamMembers);
 		            	evaluation.save(null, {
-		              	success: function(){
-		                	document.getElementById('content').innerHTML = template.updateSuccessView();
-		              	},
-		              	error: function(){},
-		            	});
-		          	}, false);
+		              		success: function(){
+		                		document.getElementById('content').innerHTML = template.updateSuccessView();
+		              		},
+		              		error: function(){},
+		            		});
+		          		}, false);
 		        	}, error: function(object, err){}
 		      	}); 
 	      	} else {
