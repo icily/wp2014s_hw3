@@ -137,9 +137,8 @@
 		},
 
 	    evaluate: function(){
-	    	var loginState = Parse.User.current();
 	      //把版型印到瀏覽器上();
-	      	if(loginState){
+	      	if(Parse.User.current()){
 	      		document.getElementById("content").innerHTML = template.evaluationView();
 	      	} else {
 	      		handler.login();
