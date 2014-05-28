@@ -17,7 +17,7 @@
 				document.getElementById('loginButton').style.display = 'none';
 				document.getElementById("logoutButton").addEventListener('click', function () {
 			        Parse.User.logOut();
-			        handlers.navbar();
+			        handler.navbar();
 			        window.location.hash = 'login/';
       			});
 	      	} else {
@@ -72,7 +72,7 @@
 	        }
 
 	      //綁定註冊表單的註冊檢查事件(); // 送出還要再檢查一次，這裡會用Parse.User.signUp和相關函數
-	      var signupCheck = function(){
+	      	var signupCheck = function(){
 		        var user = new Parse.User();
 		        user.set("username", document.getElementById('form-signup-student-id').value);
 		        user.set("password", document.getElementById('form-signup-password').value);
@@ -103,8 +103,11 @@
 
       			// submit 送出還要再檢查一次 + login (thru parse)
       			document.getElementById('form-signin').addEventListener("submit", function(){
-      				if(!signInidCheck()){alert('You are not the member of this class')
-      				} else {loginCheck()}
+      				if(!signInidCheck()){
+      					alert('You are not the member of this class');
+      					return false;
+      				}
+      				loginCheck();
       			});
 
       			//sign up
@@ -141,8 +144,6 @@
 	      	} else {
 	      		handler.login();
 	      	}
-
-
 
 	      //基本上和上課範例購物車的函數很相似，這邊會用Parse DB
 	      //問看看Parse有沒有這個使用者之前提交過的peer review物件(
