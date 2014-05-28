@@ -15,15 +15,15 @@
 	        	document.getElementById('evaluationButton').style.display = 'block';
 				document.getElementById('logoutButton').style.display = 'block';
 				document.getElementById('loginButton').style.display = 'none';
+				document.getElementById("logoutButton").addEventListener('click', function () {
+			        Parse.User.logOut();
+			        handlers.navbar();
+			        window.location.hash = 'login/';
+      			});
 	      	} else {
 	        	document.getElementById('evaluationButton').style.display = 'none';
 				document.getElementById('logoutButton').style.display = 'none';
 				document.getElementById('loginButton').style.display = 'block';
-				document.getElementById('logoutButton').addEventListener("click",function(){
-					Parse.User.logOut();
-					window.location.hash = '';
-					handler.navbar();
-				})
 			}
 	    },
 
@@ -59,12 +59,12 @@
 	      	var loginCheck = function(){
     			Parse.User.logIn(document.getElementById('form-signin-student-id').value,
        							 document.getElementById('form-signin-password').value, {
-						            success: function(user) {
+						            success: function() {
 				        	      		// Do stuff after successful login.
 					    	    	      handler.navbar();
 		    							  window.location.hash = (redirect) ? redirect : '';
 					            	},
-					            	error: function(user, error) {
+					            	error: function() {
 					            		  msg(false, 'form-signin-message', 'invalid id or password');
 				              	  		// The login failed. Check error to see why.
 				            		}
@@ -141,6 +141,8 @@
 	      	} else {
 	      		handler.login();
 	      	}
+
+
 
 	      //基本上和上課範例購物車的函數很相似，這邊會用Parse DB
 	      //問看看Parse有沒有這個使用者之前提交過的peer review物件(
