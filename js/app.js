@@ -78,11 +78,11 @@
 		        user.set("password", document.getElementById('form-signup-password').value);
 		        user.set("email", document.getElementById('form-signup-email').value);
 		        user.signUp(null, {
-		          success: function(){
+		          success: function(user){
 					  	handler.navbar();
 		    			window.location.hash = (redirect) ? redirect : '';
 		          },
-		          error: function(){
+		          error: function(user, error){
 		            	msg(false, 'form-signup-message', error.message);
 		          }
 		        });
